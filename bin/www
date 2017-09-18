@@ -88,3 +88,43 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
+app['get']('/redirect',function (req, res) {
+    res.sendFile(__dirname+'/'+'register.html' );
+});
+app['get']('/login',function (req, res) {
+    res.writeHead(200, {'Content-Type': 'text/plain;charset=utf-8'});
+    var username = req.query.username;
+    var pwd = req.query.pwd;
+    var sparameter = [username,pwd];
+    if(username===''||pwd===''){
+        res.end('????!');
+    }else{
+        connection.query(ssql,sparameter,
+            function (err, result, field) {
+                if(err){
+                    console.log(err.message);
+                }
+                console.log(result);
+                if(result.length === 0){
+                    res.end('??????');
+                }else{
+                    res.end('????')
+                }
+            });
+    }
+});
+
+app['get']('/regist',function (req,res){
+    res.writeHead(200, {'Content-Type': 'text/plain;charset=utf-8'});
+    var username = req.query.username;
+    var pwd = req.query.pwd;
+    var addparameter = [username,pwd];
+    if(username===''||pwd===''){
+        res.end('????!');
+    }else{
+        connection.query(addsql,addparameter,
+            function (err, result, field) {
+                res.end('?????');
+            });
+    }
+});

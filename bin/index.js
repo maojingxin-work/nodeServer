@@ -1,37 +1,46 @@
+var express = require('express');
+var path = require('path');
+var app = express();
+var mysql = require('mysql');
+
+var  connection = mysql.createConnection({
+   host:'localhost',
+   user:'root',
+   password:'123456',
+   database:'mydb1'
+});
+connection.connect();
+var sSql = 'SELECT * FROM user WHERE name = ? and password = ?';
+var addSql = 'INSERT INTO people ( id,name,age,gender )\n' +
+    '                       VALUES\n' +
+    '                       ( 0,?,?,?);';
+
+app.use(express.static('public'));
 
 
-var http = require('http');
-var querystring = require('querystring');
+app['get']('/',function (req, res) {
+    res.location('localhost:8081/index_1.html');
+});
+app['get']('/commit',function (req, res) {
+    var data = req.query;
+    var addParameter = [data.name,parseInt(data.age),parseInt(data.gender)];
+    connection.query(addSql,addParameter,
+        function (err, result, field) {
+            if(err){
+                console.log(err.message);
+                return;
+            }
+            console.log('----');
+            res.location('localhost:8081/register.html');
+    })
+});
+var server = app.listen(8081, function () {
 
-var postHTML =
-    '<html><head><meta charset="utf-8"><title>菜鸟教程 Node.js 实例</title></head>' +
-    '<body>' +
-    '<form method="post">' +
-    '网站名： <input name="name"><br>' +
-    '网站 URL： <input name="url"><br>' +
-    '<input type="submit">' +
-    '</form>' +
-    '</body></html>';
+    var host = server.address().address;
+    var port = server.address().port;
 
-http.createServer(function (req, res) {
-    var body = "";
-    req.on('data', function (chunk) {
-        body += chunk;
-    });
-    req.on('end', function () {
-        // 解析参数
-        body = querystring.parse(body);
-        // 设置响应头部信息及编码
-        res.writeHead(200, {'Content-Type': 'text/html; charset=utf8'});
+    console.log("应用实例，访问地址为 http://%s:%s", host, port)
 
-        if(body.name && body.url) { // 输出提交的数据
-            res.write("网站名：" + body.name);
-            res.write("<br>");
-            res.write("网站 URL：" + body.url);
-        } else {  // 输出表单
-            res.write(postHTML);
-        }
-        res.end();
-    });
-}).listen(3000);
+});
+
 

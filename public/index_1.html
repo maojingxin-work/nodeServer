@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+    <link rel="stylesheet" href="stylesheets/style.css"/>
+</head>
+<body>
+<div>
+    <input id="name" type="text" placeholder="姓名"/>
+</div>
+<div>
+    <input id="age" type="number" placeholder="年龄"/>
+</div>
+<div>
+    <select id="gender">
+        <option value="0">--男--</option>
+        <option value="1">--女--</option>
+        <option value="2">--狗--</option>
+    </select>
+</div>
+<div>
+    <button id="btn">提交信息</button>
+</div>
+<script src="javascripts/jquery.min.js"></script>
+<script>
+
+    $('#btn').bind('click', function () {
+        var name = $('#name').val();
+        var age = $('#age').val();
+        var gender = $('#gender').val();
+        console.log(name+age+gender);
+        $.ajax({
+            type: 'get',
+            url: '/commit',
+            data: {'name': name, 'age': age, 'gender': gender}
+        });
+    });
+</script>
+</body>
+</html>
